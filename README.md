@@ -1,8 +1,8 @@
 # workspaceManager
 
-An open-source, reproducible **macOS** file-organization toolkit. Clone it onto
-any Mac, add an Anthropic API key, run one installer, and three LLM-driven agents
-keep your file system tidy:
+An open-source, **macOS** file-organization toolkitx. Clone it onto
+any Mac, add an Anthropic API key, run one installer, and utilize three LLM-driven agents to help keep your file system organized.
+
 
 | Agent | What it does | Safety |
 |-------|--------------|--------|
@@ -13,9 +13,7 @@ keep your file system tidy:
 Everything the toolkit produces lives under `~/workspaceManager/` (reports,
 review folder, sort manifests, logs) — nothing is scattered across your disk.
 
-## Why "reproducible"?
 
-No paths are hardcoded to a specific user. Configuration is resolved per-machine
 from `config.yaml` (or built-in defaults), and the installer renders the launchd
 agents with your real paths. Clone → configure → `./install.sh` on any Mac.
 
@@ -28,6 +26,9 @@ agents with your real paths. Clone → configure → `./install.sh` on any Mac.
 
 - macOS, Python 3.10+
 - An `ANTHROPIC_API_KEY` (all three agents call Claude)
+- `terminal-notifier` (optional, recommended) for reliable, click-to-open
+  notification banners — `install.sh` installs it via Homebrew if missing;
+  otherwise notifications fall back to `osascript` (which macOS may suppress).
 
 ## Install
 

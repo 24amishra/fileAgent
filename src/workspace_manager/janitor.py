@@ -15,8 +15,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .common import (categorize, human, iter_files, last_touched, safe_move,
-                     write_manifest)
+from .common import (categorize, human, iter_files, last_touched, notify,
+                     safe_move, write_manifest)
 from .config import Config
 
 
@@ -108,8 +108,15 @@ def run(cfg: Config, apply: bool = False) -> int:
         apply_moves(cfg, candidates, dest)
         print(f"[janitor] moved {len(candidates)} items -> {dest}")
         print(f"[janitor] restore anytime: {dest / 'RESTORE_ALL.sh'}")
+        notify(title="Janitor moved files to review",
+               subtitle=f"{len(candidates)} items · {human(total)}",
+               message=str(dest), open_path=dest, enabled=cfg.notifications)
     else:
         print(f"[janitor] DRY RUN: {len(candidates)} candidates, "
               f"{human(total)} reclaimable (nothing moved).")
         print(f"[janitor] report: {dest / 'REPORT.md'}")
+        notify(title="Janitor scan complete",
+               subtitle=f"{len(candidates)} candidates · {human(total)} reclaimable",
+               message="Review report ready (nothing moved)",
+               open_path=dest, enabled=cfg.notifications)
     return 0

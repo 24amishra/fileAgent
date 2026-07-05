@@ -33,6 +33,9 @@ sort_batch_limit: 50
 # Token guard: only the first page / this many characters of a file are ever
 # sent to the classifier.
 peek_max_chars: 2000
+# Native macOS notification banners (where each file was filed; agent
+# completions). Set false to stay silent and rely on logs only.
+notifications: true
 # Fixed destination taxonomy. The classifier MUST pick one of these names
 # (enforced by a schema enum), so folders never fragment. Keep "Miscellaneous"
 # as the catch-all. Edit names/descriptions freely — the description is what the

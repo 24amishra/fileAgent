@@ -39,6 +39,22 @@ echo "==> Installing workspace-manager"
 
 WM_BIN="$VENV/bin/workspace-manager"
 
+# terminal-notifier gives reliable, clickable notification banners (macOS often
+# suppresses the osascript fallback). Install it via Homebrew if available.
+if ! command -v terminal-notifier >/dev/null 2>&1 \
+   && [ ! -x /opt/homebrew/bin/terminal-notifier ] \
+   && [ ! -x /usr/local/bin/terminal-notifier ]; then
+  if command -v brew >/dev/null 2>&1; then
+    echo "==> Installing terminal-notifier (for clickable notifications)"
+    brew install terminal-notifier >/dev/null 2>&1 || \
+      echo "   (brew install failed; notifications fall back to osascript)"
+  else
+    echo "!! terminal-notifier not found and Homebrew unavailable — notifications"
+    echo "   will use the osascript fallback (which macOS may suppress). Install"
+    echo "   Homebrew + 'brew install terminal-notifier' for reliable banners."
+  fi
+fi
+
 # Read workspace_root / downloads_dir from config if present, else defaults.
 WORKSPACE_ROOT="$HOME/workspaceManager"
 DOWNLOADS="$HOME/Downloads"

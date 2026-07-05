@@ -222,3 +222,51 @@ def safe_move(src: Path, target: Path) -> Path:
 
 def utc_now_stamp() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+
+
+def _terminal_notifier() -> str | None:
+    """Locate terminal-notifier. Checks PATH plus the standard Homebrew paths,
+    because a launchd agent's PATH usually omits /opt/homebrew/bin."""
+    p = shutil.which("terminal-notifier")
+    if p:
+        return p
+    for c in ("/opt/homebrew/bin/terminal-notifier",
+              "/usr/local/bin/terminal-notifier"):
+        if os.path.exists(c):
+            return c
+    return None
+
+
+def notify(title: str, message: str, subtitle: str = "",
+           open_path: str | Path | None = None, enabled: bool = True) -> None:
+    """Post a native macOS notification. Prefers ``terminal-notifier`` (reliable,
+    and lets the banner be *clicked to open the destination folder*); falls back
+    to ``osascript`` if it isn't installed. macOS silently suppresses osascript
+    banners in some configurations, so terminal-notifier is the primary path.
+    Any failure is swallowed — a notification must never break a sort.
+    """
+    if not enabled:
+        return
+    try:
+        tn = _terminal_notifier()
+        if tn:
+            args = [tn, "-title", title, "-message", message,
+                    "-group", "workspaceManager"]
+            if subtitle:
+                args += ["-subtitle", subtitle]
+            if open_path:
+                # Reveal the folder in Finder when the banner is clicked.
+                args += ["-open", "file://" + str(open_path)]
+            subprocess.run(args, timeout=5, capture_output=True)
+            return
+        # Fallback: osascript (argv-passed so nothing needs escaping).
+        body = "display notification (item 2 of argv) with title (item 1 of argv)"
+        if subtitle:
+            body += " subtitle (item 3 of argv)"
+        oargs = ["osascript", "-e", "on run argv", "-e", body, "-e", "end run",
+                 title, message]
+        if subtitle:
+            oargs.append(subtitle)
+        subprocess.run(oargs, timeout=5, capture_output=True)
+    except Exception:
+        pass

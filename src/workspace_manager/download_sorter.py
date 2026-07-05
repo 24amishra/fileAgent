@@ -15,8 +15,8 @@ from datetime import datetime
 from pathlib import Path
 
 from . import llm
-from .common import (categorize, first_page_text, human, is_bundle, safe_move,
-                     utc_now_stamp, write_manifest)
+from .common import (categorize, first_page_text, human, is_bundle, notify,
+                     safe_move, utc_now_stamp, write_manifest)
 from .config import Config
 
 # Files still being written by the browser — never touch these.
@@ -134,7 +134,27 @@ def run(cfg: Config, dry_run: bool = False, limit: int | None = None,
         write_manifest(dest, moves)
         print(f"[sort] sorted {len(moves)} item(s). "
               f"Undo: {dest / 'RESTORE_ALL.sh'}")
+        _notify_moves(cfg, moves)
     return 0
+
+
+def _notify_moves(cfg: Config, moves: list[dict]) -> None:
+    """Small batch -> one banner per file showing its destination folder.
+    Larger batch -> a single summary banner (avoid a notification storm)."""
+    if len(moves) <= 5:
+        for m in moves:
+            notify(title="Sorted a download",
+                   subtitle=f"→ {m['folder']}",
+                   message=Path(m["moved_to"]).name,
+                   open_path=Path(m["moved_to"]).parent,   # click -> that folder
+                   enabled=cfg.notifications)
+    else:
+        folders = sorted({m["folder"] for m in moves})
+        notify(title=f"Sorted {len(moves)} downloads",
+               subtitle=f"into {len(folders)} folders",
+               message=", ".join(folders),
+               open_path=cfg.sorted_root,                  # click -> _Sorted
+               enabled=cfg.notifications)
 
 
 def _sanitize(name: str) -> str:

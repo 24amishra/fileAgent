@@ -107,6 +107,10 @@ class Config:
     # are ever sent to the classifier — bounds tokens and cost, hard.
     peek_max_chars: int = 2000
 
+    # Native macOS notifications: show where each file was filed, plus agent
+    # completions — visible transparency without opening logs.
+    notifications: bool = True
+
     @property
     def review_root(self) -> Path:
         return self.workspace_root / "FlaggedForReview"
@@ -160,6 +164,8 @@ def _coerce(cfg: Config, data: dict) -> Config:
         cfg.folders = list(data["folders"])
     if "peek_max_chars" in data:
         cfg.peek_max_chars = int(data["peek_max_chars"])
+    if "notifications" in data:
+        cfg.notifications = bool(data["notifications"])
     return cfg
 
 

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Protocol
 
 from . import janitor, llm
-from .common import human, is_bundle
+from .common import human, is_bundle, notify
 from .config import Config
 
 
@@ -102,4 +102,8 @@ def run(cfg: Config, sink: Sink | None = None) -> int:
     title = f"File System State Report — {datetime.now():%Y-%m-%d}"
     location = sink.deliver(title, body, cfg)
     print(f"[report] written: {location}")
+    notify(title="File-system report ready",
+           subtitle=Path(location).name,
+           message=str(Path(location).parent),
+           open_path=location, enabled=cfg.notifications)
     return 0
