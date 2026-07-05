@@ -14,8 +14,7 @@ Everything the toolkit produces lives under `~/workspaceManager/` (reports,
 review folder, sort manifests, logs) — nothing is scattered across your disk.
 
 
-from `config.yaml` (or built-in defaults), and the installer renders the launchd
-agents with your real paths. Clone → configure → `./install.sh` on any Mac.
+ Clone → configure → `./install.sh` on any Mac.
 
 > **Scope:** macOS-first by design — it leans on native tooling (`mdls` for
 > last-opened dates, `launchd` for scheduling/watching, and macOS *bundle*
