@@ -1,0 +1,26 @@
+# Secrets — never commit
+.env
+
+# Local user config (ship config.example.yaml instead)
+config.yaml
+
+# Toolkit runtime output (in case someone points workspace_root inside the repo)
+/FlaggedForReview/
+/reports/
+/sort-manifests/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# macOS
+.DS_Store

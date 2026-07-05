@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Reporter (feature 3). Weekly file-system state report written to
+  <workspace_root>/reports/. Runs Sundays at 09:15 local (just after the
+  janitor scan so the report reflects fresh candidate data).
+  install.sh substitutes __WM_BIN__ and __LOG_DIR__.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.workspacemanager.reporter</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>__WM_BIN__</string>
+        <string>report</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>0</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>15</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>__LOG_DIR__/reporter.log</string>
+    <key>StandardErrorPath</key>
+    <string>__LOG_DIR__/reporter.log</string>
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

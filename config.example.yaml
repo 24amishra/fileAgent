@@ -1,0 +1,52 @@
+# workspaceManager configuration.
+# Copy to `config.yaml` and edit. Anything omitted falls back to the built-in
+# defaults in src/workspace_manager/config.py. Paths may use ~ for your home.
+
+# Where the toolkit keeps its own state (reports, review folder, manifests).
+workspace_root: ~/workspaceManager
+
+# --- LLM (required — all three agents call Claude) ---
+# `model` authors the weekly report (feature 3) and is the default classifier.
+# `sort_model` optionally overrides just the download classifier — Haiku 4.5 is
+# a cheap, fast, capable fit for "which folder does this file belong in".
+model: claude-opus-4-8         # report authoring
+sort_model: claude-haiku-4-5   # download classification (omit to reuse `model`)
+effort: medium                 # low | medium | high | max (report only)
+
+# --- Janitor (feature 1) ---
+scan_roots:
+  - "~"          # note: bare ~ is YAML null; always quote it
+min_size_mb: 25           # only flag items at least this large
+stale_days: 60            # ...and not opened/modified in at least this long
+# Extra directory names to never scan/flag (added to the built-in list):
+protected_dir_names: []
+# Extra top-level home dirs to skip entirely (added to the built-in list):
+prune_top_level: []
+
+# --- Download sorter (feature 2) ---
+downloads_dir: ~/Downloads
+sorted_root: ~/Downloads/_Sorted
+# Cost guard: max files classified per `sort` run (0 = unlimited). The per-
+# download watcher only ever sees a file or two at a time; this caps accidental
+# huge runs against a backlog.
+sort_batch_limit: 50
+# Token guard: only the first page / this many characters of a file are ever
+# sent to the classifier.
+peek_max_chars: 2000
+# Fixed destination taxonomy. The classifier MUST pick one of these names
+# (enforced by a schema enum), so folders never fragment. Keep "Miscellaneous"
+# as the catch-all. Edit names/descriptions freely — the description is what the
+# model reads to decide.
+folders:
+  - { name: Resume,        description: "resumes, CVs, cover letters, job applications" }
+  - { name: Schoolwork,    description: "assignments, homework, lecture notes, syllabi, exams, essays, academic papers" }
+  - { name: Invoices,      description: "invoices, receipts, bills, statements, tax documents" }
+  - { name: Documents,     description: "general documents, contracts, forms, letters" }
+  - { name: Screenshots,   description: "screenshots and screen captures" }
+  - { name: Images,        description: "photos, graphics, design assets, logos (not screenshots)" }
+  - { name: Installers,    description: "app installers and disk images: .dmg, .pkg, .exe, .msi" }
+  - { name: Archives,      description: "compressed archives: .zip, .tar, .gz, .7z, .rar" }
+  - { name: Media,         description: "video and audio files" }
+  - { name: Code,          description: "source code, scripts, notebooks, project archives" }
+  - { name: Data,          description: "datasets: .csv, .json, .xlsx, .parquet" }
+  - { name: Miscellaneous, description: "anything unclear or unidentifiable" }
